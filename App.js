@@ -1,54 +1,33 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Animated, PanResponder } from 'react-native';
+import { FlatList } from 'react-native-web';
 
 export default function App() {
-  const position = new Animated.ValueXY({ x: 0, y: 0 })
-  // Animated.timing(position, {
-  //   toValue: { x: 300, y: 400 },
-  //   duration: 2000
-  // }).start()
-
-  const pan = PanResponder.create({
-    onMoveShouldSetPanResponder: () => true, // When you move your fintger, the animation should be placed
-    onPanResponderMove: Animated.event([
-      null,
-      { dx: position.x, dy: position.y }
-    ]),
-    // Same result as above function
-    // onPanResponderMove: (event, gesture) => {
-    //   position.setValue({ x: gesture.dx, y: gesture.dy })
-    // }
-    onPanResponderRelease: () => {
-      // position.setValue({ x: 0, y: 0 })
-      Animated.spring(position, {
-        toValue: { x: 0, y: 0 },
-        useNativeDriver: true
-      }).start()
-    }
+  const scrollY = new Animated.Value(0)
+  const diffClamp = Animated.diffClamp(scrollY, 0, 45) // 45 is the height of the "header"
+  const translateY = diffClamp.interpolate({ // 45 is the height
+    inputRange: [0, 45],
+    outputRange: [0, -45]
   })
-
-  const rotate = position.x.interpolate({
-    inputRange: [0, 100],
-    outputRange: ["0deg", "360deg"]
-  })
-
+  // if don't want to scoll up and see the header all the time
+  // const translateY = scrollY.interpolate({
+  //   inputRange: [0, 45],
+  //   outputRange: [0, -45]
+  // })
   return (
     <View style={styles.container}>
+      {/* This is the "header" you want to hide/show while scrolling */}
       <Animated.View
-        {...pan.panHandlers}
         style={{
-          height: 80,
-          width: 80,
-          backgroundColor: "#f9f",
-          alignItems: 'center',
-          justifyContent: 'center',
           transform: [
-            { translateX: position.x },
-            { translateY: position.y },
-            { rotate: rotate }
-          ]
+            { translateY: translateY },
+          ],
+          elevation: 10,
+          zIndex: 10
         }}>
+        {/* The child should have a absolute position and top, left, right set to 0 */}
       </Animated.View>
+      <FlatList />
       <StatusBar style="auto" />
     </View>
   );
