@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Animated, PanResponder } from 'react-native';
+import { StyleSheet, Text, View, Animated, PanResponder, Easing } from 'react-native';
 import { FlatList } from 'react-native-web';
 
 export default function App() {
